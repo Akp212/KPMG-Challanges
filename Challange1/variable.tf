@@ -16,6 +16,9 @@ variable "app_subnet_name" {
 variable "db_subnet_name" {
   type = string
 }
+variable "pip" {
+  type = string
+}
 variable "web_network_interface_name" {
   type = string
 }
