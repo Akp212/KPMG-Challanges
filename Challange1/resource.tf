@@ -26,6 +26,14 @@ resource "azurerm_subnet" "db-subnet" {
   virtual_network_name = azurerm_virtual_network.VN.name
   address_prefixes     = ["10.0.2.0/24"]
 }
+
+resource "azurerm_public_ip" "pip" {
+  name                = "pip"
+  location            = azurerm_resource_group.challange.location
+  resource_group_name = azurerm_resource_group.challange.name
+  allocation_method   = "Dynamic"
+}
+
 resource "azurerm_network_security_group" "web-nsg" {
   name = var.web_nsg_name
   location            = azurerm_resource_group.challange.location
@@ -72,6 +80,7 @@ resource "azurerm_network_interface" "web_nic" {
     name                          = "web"
     subnet_id                     = azurerm_subnet.subnet1.id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id = azurerm_public_ip.public_ip.id
   }
 }
 resource "azurerm_linux_virtual_machine" "web-vm" {
@@ -85,7 +94,7 @@ resource "azurerm_linux_virtual_machine" "web-vm" {
   admin_password = "Password@123"
   disable_password_authentication = false
   network_interface_ids = [
-    azurerm_network_interface.nic.id,
+    azurerm_network_interface.web_nic.id,
   ]
 
   os_disk {
@@ -222,9 +231,3 @@ resource "azurerm_sql_database" "db" {
   resource_group_name = azurerm_resource_group.challange.name
   server_name         = azurerm_sql_server.primary.name
 }
-
-
-
-
-
-
