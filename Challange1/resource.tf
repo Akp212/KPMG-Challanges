@@ -24,7 +24,7 @@ resource "azurerm_subnet" "db-subnet" {
   name                 = var.db_subnet_name
   resource_group_name  = azurerm_resource_group.challange.name
   virtual_network_name = azurerm_virtual_network.VN.name
-  address_prefixes     = ["10.0.2.0/24"]
+  address_prefixes     = ["10.0.3.0/24"]
 }
 
 resource "azurerm_public_ip" "pip" {
@@ -56,7 +56,7 @@ resource "azurerm_network_security_group" "web-nsg" {
     direction                  = "Inbound"
     access                     = "Deny"
     protocol                   = "Tcp"
-    source_address_prefix      = "192.168.3.0/24"
+    source_address_prefix      = "10.0.3.0/24"
     source_port_range          = "*"
     destination_address_prefix = "*"
     destination_port_range     = "22"
@@ -136,7 +136,7 @@ resource "azurerm_network_security_group" "app-nsg" {
         direction = "Inbound"
         access = "Allow"
         protocol = "Tcp"
-        source_address_prefix = "192.168.1.0/24"
+        source_address_prefix = "10.0.1.0/24"
         source_port_range = "*"
         destination_address_prefix = "*"
         destination_port_range = "22"
@@ -148,7 +148,7 @@ resource "azurerm_network_security_group" "app-nsg" {
         direction = "Outbound"
         access = "Allow"
         protocol = "Tcp"
-        source_address_prefix = "192.168.1.0/24"
+        source_address_prefix = "10.0.1.0/24"
         source_port_range = "*"
         destination_address_prefix = "*"
         destination_port_range = "22"
@@ -194,7 +194,7 @@ resource "azurerm_network_security_group" "db-nsg" {
         direction = "Inbound"
         access = "Allow"
         protocol = "Tcp"
-        source_address_prefix = "192.168.2.0/24"
+        source_address_prefix = "10.0.2.0/24"
         source_port_range = "*"
         destination_address_prefix = "*"
         destination_port_range = "3306"
@@ -207,6 +207,17 @@ resource "azurerm_network_security_group" "db-nsg" {
         access = "Allow"
         protocol = "Tcp"
         source_address_prefix = "192.168.2.0/24"
+        source_port_range = "*"
+        destination_address_prefix = "*"
+        destination_port_range = "3306"
+    }
+    security_rule {
+        name = "ssh-rule-3"
+        priority = 100
+        direction = "Outbound"
+        access = "Deny"
+        protocol = "Tcp"
+        source_address_prefix = "10.0.1.0/24"
         source_port_range = "*"
         destination_address_prefix = "*"
         destination_port_range = "3306"
